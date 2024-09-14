@@ -34,6 +34,4 @@ class Snake:
             else:
                 back.move(window, dx, dy + 10)
         self.q.appendleft(back)
-        print(back.get_x(), back.get_y())
-        print(back.r)
             

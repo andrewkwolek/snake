@@ -21,18 +21,20 @@ def main():
     # Initialize snake object
     head = Body(400, 400)
     s = Snake(head)
-    pygame.draw.rect(window, settings.WHITE, head.get_rect())
+    pygame.draw.rect(window, head.color, head.get_rect())
+
+    # Initialize first food piece
+    food = Food(random.randrange(0, settings.WIDTH, 10), random.randrange(0, settings.HEIGHT, 10))
+    print(food.get_rect())
+    pygame.draw.rect(window, food.color, food.get_rect())
+    print(food.get_x(), food.get_y())
     pygame.display.update()
+
     running = True
     curr_dir = "a"
 
-    # Initialize first food piece
-    food = Food(random.randrange(settings.WIDTH), random.randrange(settings.HEIGHT))
-    
-
     while running:
         for event in pygame.event.get():
-            print(event.type)
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -48,7 +50,6 @@ def main():
                 elif event.key == pygame.K_d:
                     print("Right")
                     curr_dir = "d"
-                print("update")
             if event.type == EAT_FOOD:
                 print("Munch")
             if event.type == DIE:
@@ -56,6 +57,7 @@ def main():
 
         window.fill(settings.BLUE)
         s.move(window, curr_dir)
+        food.draw(window)
         pygame.display.update()
 
         time.sleep(0.1)

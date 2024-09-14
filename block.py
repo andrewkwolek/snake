@@ -24,7 +24,6 @@ class Body(Block):
     def move(self, window, dx, dy):
         self.x = self.x + dx
         self.y = self.y + dy
-        print("Move")
         self.r.move_ip(dx, dy)
         pygame.draw.rect(window, self.color, self.r)
 
@@ -32,3 +31,6 @@ class Food(Block):
     def __init__(self, x_init, y_init):
         self.color = (0, 255, 0)
         super().__init__(x_init, y_init)
+
+    def draw(self, window):
+        pygame.draw.rect(window, self.color, self.r)
