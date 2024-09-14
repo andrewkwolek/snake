@@ -1,21 +1,34 @@
 from snake import Snake
+from block import Body, Food
 import pygame
-
+import time
+import settings
+import random
 
 def main():
+    # Initialize pygame window
     pygame.init()
-    s = Snake()
-    window = pygame.display.set_mode((800, 800))
-    blue = (0, 0, 255)
-    window.fill(blue)
-    pygame.display.flip()
+    clock = pygame.time.Clock
+    window = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+    window.fill(settings.BLUE)
     pygame.display.update()
+    pygame.display.flip()
+
+    # Set user events
     EAT_FOOD = pygame.USEREVENT + 1
     DIE = pygame.USEREVENT + 2
 
-    pygame.draw.rect(window, (255, 255, 255), (s.q[0].x, s.q[0].y, 10, 10))
+    # Initialize snake object
+    head = Body(400, 400)
+    s = Snake(head)
+    pygame.draw.rect(window, settings.WHITE, head.get_rect())
     pygame.display.update()
     running = True
+    curr_dir = "a"
+
+    # Initialize first food piece
+    food = Food(random.randrange(settings.WIDTH), random.randrange(settings.HEIGHT))
+    
 
     while running:
         for event in pygame.event.get():
@@ -25,23 +38,27 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     print("Up")
-                    s.move("w")
+                    curr_dir = "w"
                 elif event.key == pygame.K_s:
                     print("Down")
-                    s.move("s")
+                    curr_dir = "s"
                 elif event.key == pygame.K_a:
                     print("Left")
-                    s.move("a")
+                    curr_dir = "a"
                 elif event.key == pygame.K_d:
                     print("Right")
-                    s.move("d")
-                for block in s.q:
-                        pygame.draw.rect(window, block.color, (block.x, block.y, 10, 10))
-                pygame.display.update()
+                    curr_dir = "d"
+                print("update")
             if event.type == EAT_FOOD:
                 print("Munch")
             if event.type == DIE:
                 print("Game Over!")      
+
+        window.fill(settings.BLUE)
+        s.move(window, curr_dir)
+        pygame.display.update()
+
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":

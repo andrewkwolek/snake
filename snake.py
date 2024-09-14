@@ -1,22 +1,39 @@
 from collections import deque
 from block import Block, Body, Food
-import random
+import pygame
+import settings
 
 class Snake:
-    def __init__(self):
+    def __init__(self, head : Body):
         self.q = deque()
-        b = Body(400, 400)
-        print(b.x)
-        self.q.append(b)
+        self.q.append(head)
 
-    def move(self, dir):
-        temp = self.q.pop()
+    def move(self, window, dir):
+        front = self.q[0]
+        back = self.q.pop()
+        dx = front.get_x() - back.get_x()
+        dy = front.get_y() - back.get_y()
         if dir == "w":
-            temp.y -= 10
+            if back.get_y() - 10 < 0:
+                back.move(window, dx, dy + settings.HEIGHT - 10)
+            else:
+                back.move(window, dx, dy - 10)
         if dir == "d":
-            temp.x += 10
+            if back.get_x() + 10 > settings.WIDTH:
+                back.move(window, dx - settings.WIDTH + 10, dy)
+            else:
+                back.move(window, dx + 10, dy)
         if dir == "a":
-            temp.x -= 10
+            if back.get_x() - 10 < 0:
+                back.move(window, dx + settings.WIDTH - 10, dy)
+            else:
+                back.move(window, dx - 10, dy)
         if dir == "s":
-            temp.y += 10
-        self.q.appendleft(temp)
+            if back.get_y() + 10 > settings.HEIGHT:
+                back.move(window, dx, dy - settings.HEIGHT + 10)
+            else:
+                back.move(window, dx, dy + 10)
+        self.q.appendleft(back)
+        print(back.get_x(), back.get_y())
+        print(back.r)
+            
