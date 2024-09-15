@@ -1,9 +1,10 @@
 import pygame
+import settings
 
 class Block:
     def __init__(self, x_init, y_init):
         self.coord = (x_init, y_init)
-        self.r = pygame.Rect(self.coord[0], self.coord[1], 10, 10)
+        self.r = pygame.Rect(self.coord[0], self.coord[1], settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
 
     def get_coords(self):
         return self.coord
@@ -20,7 +21,7 @@ class Block:
 
 class Body(Block):
     def __init__(self, x_init, y_init):
-        self.color = (255, 255, 255)
+        self.color = settings.WHITE
         super().__init__(x_init, y_init)
     
     def draw(self, window):
@@ -32,7 +33,7 @@ class Body(Block):
 
 class Food(Block):
     def __init__(self, x_init, y_init):
-        self.color = (0, 255, 0)
+        self.color = settings.GREEN
         super().__init__(x_init, y_init)
 
     def draw(self, window):
@@ -41,8 +42,5 @@ class Food(Block):
     def move(self, new_x, new_y):
         dx = new_x - self.get_x()
         dy = new_y - self.get_y()
-        print(new_x, new_y)
-        print(self.get_x(), self.get_y())
-        print(dx, dy)
+        self.coord = (self.coord[0] + dx, self.coord[1] + dy)
         self.r.move_ip(dx, dy)
-        print("New food")

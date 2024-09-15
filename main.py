@@ -5,6 +5,12 @@ import time
 import settings
 import random
 
+def game_over():
+    print("Game Over!")
+    time.sleep(2)
+    pygame.quit()
+    quit()
+
 def main():
     # Initialize pygame window
     pygame.init()
@@ -19,24 +25,24 @@ def main():
     DIE = pygame.USEREVENT + 2
 
     # Initialize snake object
-    head = Body(400, 400)
+    head = Body(settings.WIDTH / 2, settings.HEIGHT / 2)
     s = Snake(head)
     pygame.draw.rect(window, head.color, head.get_rect())
 
     # Initialize first food piece
-    food = Food(random.randrange(0, settings.WIDTH, 10), random.randrange(0, settings.HEIGHT, 10))
-    print(food.get_rect())
+    food = Food(random.randrange(settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH), random.randrange(settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH))
     food.draw(window)
-    print(food.get_x(), food.get_y())
     pygame.display.update()
 
     running = True
     curr_dir = "a"
 
+    # Game loop
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                game_over()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w and curr_dir != "s":
                     curr_dir = "w"
@@ -48,8 +54,8 @@ def main():
                     curr_dir = "d"
                 elif event.key == pygame.K_ESCAPE:
                     running = False
+                    game_over()
             if event.type == EAT_FOOD:
-                print("Munch")
                 s.grow()
                 safe_x = False
                 safe_y = False
@@ -60,11 +66,11 @@ def main():
 
                 while not safe_x and not safe_y:
                     if not safe_x:
-                        x = random.randrange(0, settings.WIDTH, 10)
+                        x = random.randrange(settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
                         if x not in x_coords:
                             safe_x = True
                     if not safe_y:
-                        y = random.randrange(0, settings.HEIGHT, 10)
+                        y = random.randrange(settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
                         if y not in y_coords:
                             safe_y = True
                 
@@ -78,21 +84,26 @@ def main():
         window.fill(settings.BLUE)
         s.move(window, curr_dir)
         food.draw(window)
-        pygame.display.update()
 
         # Check if snake eats food
         head = s.get_head()
         if head.get_rect().colliderect(food.get_rect()):
             pygame.event.post(pygame.event.Event(EAT_FOOD))
+
+        # Check if snake hits wall
+        if head.get_x() < 0 or head.get_x() >= settings.WIDTH:
+            game_over()
+        if head.get_y() < 0 or head.get_y() >= settings.HEIGHT:
+            game_over()
         
         # Check if snake hits itself
         for bod in s.get_body():
-            if s.get_length() > 2 and head.get_rect().colliderect(bod.get_rect()):
-                print(head.get_x(), head.get_y())
-                print(bod.get_x(), bod.get_y())
+            if s.get_length() > 1 and head.get_rect().colliderect(bod.get_rect()):
                 pygame.event.post(pygame.event.Event(DIE))
+                game_over()
                 break
 
+        pygame.display.update()
         time.sleep(0.1)
 
     pygame.quit()
