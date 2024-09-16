@@ -5,8 +5,14 @@ import time
 import settings
 import random
 
-def game_over():
+def game_over(window, score):
+    time.sleep(1)
+    window.fill(settings.BLUE)
     print("Game Over!")
+    go_ft = pygame.font.SysFont(None, 48)
+    go_text = pygame.font.Font.render(go_ft, f'GAME OVER! Score: {score}', 1, settings.RED)
+    window.blit(go_text, (settings.WIDTH / 4, settings.HEIGHT / 4))
+    pygame.display.update()
     time.sleep(2)
     pygame.quit()
     quit()
@@ -14,6 +20,7 @@ def game_over():
 def main():
     # Initialize pygame window
     pygame.init()
+    ft = pygame.font.SysFont(None, 32)
     clock = pygame.time.Clock
     window = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
     window.fill(settings.BLUE)
@@ -23,6 +30,10 @@ def main():
     # Set user events
     EAT_FOOD = pygame.USEREVENT + 1
     DIE = pygame.USEREVENT + 2
+
+    score = 0
+    text = pygame.font.Font.render(ft, f'Score: {score}', 1, settings.WHITE)
+    window.blit(text, (20, 20))
 
     # Initialize snake object
     head = Body(settings.WIDTH / 2, settings.HEIGHT / 2)
@@ -42,7 +53,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                game_over()
+                game_over(window, score)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w and curr_dir != "s":
                     curr_dir = "w"
@@ -54,8 +65,9 @@ def main():
                     curr_dir = "d"
                 elif event.key == pygame.K_ESCAPE:
                     running = False
-                    game_over()
+                    game_over(window, score)
             if event.type == EAT_FOOD:
+                score += 1
                 s.grow()
                 safe_x = False
                 safe_y = False
@@ -84,6 +96,8 @@ def main():
         window.fill(settings.BLUE)
         s.move(window, curr_dir)
         food.draw(window)
+        text = pygame.font.Font.render(ft, f'Score: {score}', 1, settings.WHITE)
+        window.blit(text, (20, 20))
 
         # Check if snake eats food
         head = s.get_head()
@@ -92,15 +106,15 @@ def main():
 
         # Check if snake hits wall
         if head.get_x() < 0 or head.get_x() >= settings.WIDTH:
-            game_over()
+            game_over(window, score)
         if head.get_y() < 0 or head.get_y() >= settings.HEIGHT:
-            game_over()
+            game_over(window, score)
         
         # Check if snake hits itself
         for bod in s.get_body():
             if s.get_length() > 1 and head.get_rect().colliderect(bod.get_rect()):
                 pygame.event.post(pygame.event.Event(DIE))
-                game_over()
+                game_over(window, score)
                 break
 
         pygame.display.update()
