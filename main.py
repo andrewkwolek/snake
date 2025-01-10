@@ -5,17 +5,20 @@ import time
 import settings
 import random
 
+
 def game_over(window, score):
     time.sleep(1)
     window.fill(settings.BLUE)
     print("Game Over!")
     go_ft = pygame.font.SysFont(None, 48)
-    go_text = pygame.font.Font.render(go_ft, f'GAME OVER! Score: {score}', 1, settings.RED)
+    go_text = pygame.font.Font.render(
+        go_ft, f'GAME OVER! Score: {score}', 1, settings.RED)
     window.blit(go_text, (settings.WIDTH / 4, settings.HEIGHT / 4))
     pygame.display.update()
     time.sleep(2)
     pygame.quit()
     quit()
+
 
 def main():
     # Initialize pygame window
@@ -41,7 +44,8 @@ def main():
     pygame.draw.rect(window, head.color, head.get_rect())
 
     # Initialize first food piece
-    food = Food(random.randrange(settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH), random.randrange(settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH))
+    food = Food(random.randrange(settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH),
+                random.randrange(settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH))
     food.draw(window)
     pygame.display.update()
 
@@ -78,25 +82,28 @@ def main():
 
                 while not safe_x and not safe_y:
                     if not safe_x:
-                        x = random.randrange(settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
+                        x = random.randrange(
+                            settings.BLOCK_LENGTH, settings.WIDTH - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
                         if x not in x_coords:
                             safe_x = True
                     if not safe_y:
-                        y = random.randrange(settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
+                        y = random.randrange(
+                            settings.BLOCK_LENGTH, settings.HEIGHT - settings.BLOCK_LENGTH, settings.BLOCK_LENGTH)
                         if y not in y_coords:
                             safe_y = True
-                
+
                 food.move(x, y)
-                
+
             if event.type == DIE:
-                print("Game Over!") 
+                print("Game Over!")
                 running = False
 
         # Draw game objects
         window.fill(settings.BLUE)
         s.move(window, curr_dir)
         food.draw(window)
-        text = pygame.font.Font.render(ft, f'Score: {score}', 1, settings.WHITE)
+        text = pygame.font.Font.render(
+            ft, f'Score: {score}', 1, settings.WHITE)
         window.blit(text, (20, 20))
 
         # Check if snake eats food
@@ -109,7 +116,7 @@ def main():
             game_over(window, score)
         if head.get_y() < 0 or head.get_y() >= settings.HEIGHT:
             game_over(window, score)
-        
+
         # Check if snake hits itself
         for bod in s.get_body():
             if s.get_length() > 1 and head.get_rect().colliderect(bod.get_rect()):
